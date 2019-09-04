@@ -1,41 +1,38 @@
-use linux_nvme_sys::{nvme_admin_opcode, nvme_id_ctrl, nvme_passthru_cmd};
+use linux_nvme_sys::{nvme_admin_cmd, nvme_admin_opcode, nvme_id_ctrl, nvme_ioctl_admin_cmd};
 use std::fs;
 use std::mem::MaybeUninit;
-use std::os::unix::io::AsRawFd;
+use std::os::unix::io::{AsRawFd, RawFd};
 use std::path::Path;
 use std::ptr::NonNull;
 
-const NVME_IOCTL_ADMIN_CMD: u64 = 0xc0484e41;
-
-pub unsafe fn nvme_ioctl<P: AsRef<Path>, T: Sized>(
+fn nvme_ioctl<P: AsRef<Path>, F: FnMut(RawFd) -> nix::Result<std::os::raw::c_int>>(
     dev: P,
-    id_response: NonNull<T>,
+    mut cmd: F,
 ) -> std::io::Result<()> {
     let file = fs::File::open(dev)?;
     let raw_fd = file.as_raw_fd();
-
-    let mut nvme_admin_command = nvme_passthru_cmd {
-        opcode: nvme_admin_opcode::nvme_admin_identify as u8,
-        addr: id_response.as_ptr() as u64,
-        data_len: std::mem::size_of::<T>() as u32,
-        cdw10: 1,
-        ..nvme_passthru_cmd::default()
-    };
-    let res = linux_nvme_sys::ioctl(
-        raw_fd,
-        NVME_IOCTL_ADMIN_CMD,
-        &mut nvme_admin_command as *mut nvme_passthru_cmd as u64,
-    );
-    if res != 0 {
-        Err(std::io::Error::last_os_error())?;
-    }
+    let _ = cmd(raw_fd).map_err(|err| std::io::Error::from(err.as_errno().unwrap()))?;
     Ok(())
+}
+
+unsafe fn nvme_admin_cmd_submit<P: AsRef<Path>, T: Sized>(
+    dev: P,
+    id_response: NonNull<T>,
+) -> std::io::Result<()> {
+    let mut nvme_admin_command = nvme_admin_cmd {
+        opcode: nvme_admin_opcode::nvme_admin_identify as _,
+        addr: id_response.as_ptr() as _,
+        data_len: std::mem::size_of::<T>() as _,
+        cdw10: 1,
+        ..nvme_admin_cmd::default()
+    };
+    nvme_ioctl(dev, |fd| nvme_ioctl_admin_cmd(fd, &mut nvme_admin_command))
 }
 
 pub fn nvme_identify_controller<P: AsRef<Path>>(dev: P) -> std::io::Result<nvme_id_ctrl> {
     unsafe {
         let mut id_ctrl = MaybeUninit::<nvme_id_ctrl>::zeroed();
-        nvme_ioctl(dev, NonNull::new_unchecked(id_ctrl.as_mut_ptr()))?;
+        nvme_admin_cmd_submit(dev, NonNull::new_unchecked(id_ctrl.as_mut_ptr()))?;
         Ok(id_ctrl.assume_init())
     }
 }
