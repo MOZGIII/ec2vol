@@ -36,7 +36,3 @@ pub fn nvme_identify_controller<P: AsRef<Path>>(dev: P) -> std::io::Result<nvme_
         Ok(id_ctrl.assume_init())
     }
 }
-
-pub fn i8_as_u8<'a>(buf: &'a [i8]) -> &'a [u8] {
-    unsafe { std::slice::from_raw_parts(buf.as_ptr() as *const u8, buf.len()) }
-}
