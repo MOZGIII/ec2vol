@@ -11,6 +11,6 @@ fn main() -> std::io::Result<()> {
         }
     };
     let val = nvme_ioctl::nvme_identify_controller(dev)?;
-    println!("{}", String::from_utf8_lossy(nvme_ioctl::i8_to_u8(&val.sn)));
+    println!("{}", String::from_utf8_lossy(nvme_ioctl::i8_as_u8(&val.sn)));
     Ok(())
 }
