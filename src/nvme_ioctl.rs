@@ -1,4 +1,4 @@
-use linux_nvme_sys::{nvme_admin_opcode_nvme_admin_identify, nvme_id_ctrl, nvme_passthru_cmd};
+use linux_nvme_sys::{nvme_admin_opcode, nvme_id_ctrl, nvme_passthru_cmd};
 use std::fs;
 use std::mem::MaybeUninit;
 use std::os::unix::io::AsRawFd;
@@ -15,24 +15,11 @@ pub unsafe fn nvme_ioctl<P: AsRef<Path>, T: Sized>(
     let raw_fd = file.as_raw_fd();
 
     let mut nvme_admin_command = nvme_passthru_cmd {
-        opcode: nvme_admin_opcode_nvme_admin_identify as u8,
-        flags: 0,
-        rsvd1: 0,
-        nsid: 0,
-        cdw2: 0,
-        cdw3: 0,
-        metadata: 0,
+        opcode: nvme_admin_opcode::nvme_admin_identify as u8,
         addr: id_response.as_ptr() as u64,
-        metadata_len: 0,
         data_len: std::mem::size_of::<T>() as u32,
         cdw10: 1,
-        cdw11: 0,
-        cdw12: 0,
-        cdw13: 0,
-        cdw14: 0,
-        cdw15: 0,
-        timeout_ms: 0,
-        result: 0,
+        ..nvme_passthru_cmd::default()
     };
     let res = linux_nvme_sys::ioctl(
         raw_fd,

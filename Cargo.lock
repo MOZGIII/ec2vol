@@ -123,7 +123,7 @@ dependencies = [
 name = "ec2vol"
 version = "0.1.0"
 dependencies = [
- "linux-nvme-sys 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "linux-nvme-sys 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [[package]]
@@ -188,7 +188,7 @@ dependencies = [
 
 [[package]]
 name = "linux-nvme-sys"
-version = "0.1.0"
+version = "0.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 dependencies = [
  "bindgen 0.51.0 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -384,7 +384,7 @@ dependencies = [
 "checksum lazy_static 1.4.0 (registry+https://github.com/rust-lang/crates.io-index)" = "e2abad23fbc42b3700f2f279844dc832adb2b2eb069b2df918f455c4e18cc646"
 "checksum libc 0.2.62 (registry+https://github.com/rust-lang/crates.io-index)" = "34fcd2c08d2f832f376f4173a231990fa5aef4e99fb569867318a227ef4c06ba"
 "checksum libloading 0.5.2 (registry+https://github.com/rust-lang/crates.io-index)" = "f2b111a074963af1d37a139918ac6d49ad1d0d5e47f72fd55388619691a7d753"
-"checksum linux-nvme-sys 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)" = "a36a3f958cb745559992dfefcef21932f04a242b479ef1a470584e20dff91510"
+"checksum linux-nvme-sys 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)" = "ac38ae202bc1092b2fdbdcdd544518dfb9f13dd38fe50268e9496ef250e60883"
 "checksum log 0.4.8 (registry+https://github.com/rust-lang/crates.io-index)" = "14b6052be84e6b71ab17edffc2eeabf5c2c3ae1fdb464aae35ac50c67a44e1f7"
 "checksum memchr 2.2.1 (registry+https://github.com/rust-lang/crates.io-index)" = "88579771288728879b57485cc7d6b07d648c9f0141eb955f8ab7f9d45394468e"
 "checksum nom 4.2.3 (registry+https://github.com/rust-lang/crates.io-index)" = "2ad2a91a8e869eeb30b9cb3119ae87773a8f4ae617f41b1eb9c154b2905f7bd6"
