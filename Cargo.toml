@@ -5,5 +5,5 @@ authors = ["MOZGIII <mike-n@narod.ru>"]
 edition = "2018"
 
 [dependencies]
-linux-nvme-sys = "0.3"
-nix = "0.15"
+linux-nvme-sys = "0.4"
+nix = "0.26"
